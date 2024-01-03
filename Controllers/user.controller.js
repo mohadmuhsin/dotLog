@@ -52,7 +52,7 @@ const userController = {
                 return res.status(409).json({ message: "Username Already exist" });
             }
 
-            const exists = await User.findOne({ email: email })
+            const exists = await User.findOne({ email: email }).maxTimeMS(30000)
             if (exists)
                 return res.status(400).json({ message: "This email is already registered" })
 
@@ -114,7 +114,7 @@ const userController = {
             if (!validate.status) {
                 return res.status(400).json({ message: validate.response[0].message })
             }
-            let user = await User.findOne({ username: { $regex: new RegExp(username, 'i') } })
+            let user = await User.findOne({ username: { $regex: new RegExp(username, 'i') } }).maxTimeMS(30000)
             if (!user)
                 return res.status(404).json({ message: "Please enter a valid username" });
             const validatePass = await bcrypt.compare(password, user.password);
